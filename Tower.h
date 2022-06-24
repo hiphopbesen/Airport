@@ -11,9 +11,6 @@ private:
     int start[50];
     int landung[50];
     int rollfeld;
-    int
-
-
 };
 
 

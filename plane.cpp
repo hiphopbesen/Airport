@@ -6,16 +6,20 @@
 using namespace std;
 
 plane::plane(int sol, int stoff) {
+    absicht = sol;
     if(absicht == 1){
         stoff = 0;
         textabsicht = "Starten";
     } else{
         textabsicht = "Landen";
     }
-    absicht = sol;
     treibstoff = stoff;
 }
 
 void plane::request() {
-    cout << "Flugzeug xxx mit absicht "<< textabsicht <<" hat noch treibstoff für "<< treibstoff << endl;
+    if(absicht == 1){
+        cout << " Flugzeug xxx Will "<< textabsicht << endl;
+        return;
+    }
+    cout << " Flugzeug xxx mit absicht "<< textabsicht <<" hat noch Treibstoff für "<< treibstoff << endl;
 }
