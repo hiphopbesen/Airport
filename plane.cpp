@@ -5,8 +5,9 @@
 #include "plane.h"
 using namespace std;
 
-plane::plane(int sol, int stoff) {
+plane::plane(int sol, int stoff, int start, int fnum) {
     absicht = sol;
+    startzeit = start;
     if(absicht == 1){
         stoff = 0;
         textabsicht = "Starten";
@@ -14,12 +15,13 @@ plane::plane(int sol, int stoff) {
         textabsicht = "Landen";
     }
     treibstoff = stoff;
+    flugnummer = fnum;
 }
 
 void plane::request() {
     if(absicht == 1){
-        cout << " Flugzeug xxx Will "<< textabsicht << endl;
+        cout << " Flug NR:" << flugnummer << " mit absicht "<< textabsicht << endl;
         return;
     }
-    cout << " Flugzeug xxx mit absicht "<< textabsicht <<" hat noch Treibstoff für "<< treibstoff << endl;
+    cout << " Flug NR:" << flugnummer << " mit absicht "<< textabsicht <<" hat noch Treibstoff für "<< treibstoff << endl;
 }

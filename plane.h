@@ -14,8 +14,10 @@ public:
     string textabsicht;
     //treibstoff, wie lange reicht er in sekunden
     int treibstoff;
+    int startzeit;
+    int flugnummer;
 
-    plane(int sol, int stoff);
+    plane(int sol, int stoff, int start, int fnum);
     void request();
 };
 

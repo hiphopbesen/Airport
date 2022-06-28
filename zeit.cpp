@@ -12,7 +12,7 @@ zeit::zeit() {
     sek = 0;
 }
 
-void zeit::printtime() {
+void zeit::printtime(){
     string ps;
     string ss;
     string ms;
@@ -35,8 +35,7 @@ void zeit::printtime() {
 }
 
 //suffix operator
-zeit zeit::operator ++(int nil)
-{
+zeit zeit::operator ++(int nil){
     sek++;
     if(sek == 60){
         sek = 0;
