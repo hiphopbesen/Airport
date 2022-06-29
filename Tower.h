@@ -8,18 +8,25 @@ using namespace std;
 
 class Tower {
 private:
-    int start[50][5] = {0};
+    //werte zum anpassen
+        //zeitspanne start und landung in sekunden
+        int landezeit = 300;
+        int startzeit = 300;
+        //maximale schlangenlänge
+        int landung[50][5] = {0};
+        int final[100][5] = {0};
+        int start[50][5] = {0};
+
+    //variablen die zur berechnung benötigt werden
     int startlaenge = 0;
     int landelaenge = 0;
-    int landung[50][5] = {0};
-    int final[100][5] = {0};
-    int finallaenge = 0;
+    int ges = 0;
+
+    //rollfeld
     int rollfeld = 0;  // 0= frei 1 = belegt
     int rfvorgang; //1 = start 0 = landung
     int rfbstart = 0; //rollfeld vorgang startzeit in sek nach öffnung des flughafens
-    int ges = 0;
-    int landezeit = 0;
-    int startzeit = 0;
+    int currentwait = 0; //wartezeit
 
 public:
     Tower();
@@ -30,6 +37,9 @@ public:
     void abfertigen(int zeit);
     void popstart();
     void poplandung();
+    void kannlanden();
+    void checkcrash(int ts);
+    void crash(int id,int ts);
     void debug();
 };
 

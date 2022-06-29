@@ -18,7 +18,7 @@ public:
     int flugnummer;
 
     plane(int sol, int stoff, int start, int fnum);
-    void request();
+    void request(int time);
 };
 
 

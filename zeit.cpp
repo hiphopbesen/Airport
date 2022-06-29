@@ -31,7 +31,7 @@ void zeit::printtime(){
     }else{
         ss = to_string(sek);
     }
-    cout << ps << ":"<< ms <<":"<< ss << endl;
+    cout << ps << ":"<< ms <<":"<< ss;
 }
 
 //suffix operator
@@ -48,4 +48,11 @@ zeit zeit::operator ++(int nil){
             }
         }
     }
+}
+
+void zeit::printnow(int ts) {
+    for (int i = 0; i < ts; ++i) {
+        operator++(0);
+    }
+    printtime();
 }

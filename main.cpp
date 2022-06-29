@@ -8,33 +8,36 @@
 using namespace std;
 
 int main() {
-    cout << "Hello, World!" << endl;
+    cout << "Airport simulation!" << endl;
     zeit x = zeit();
     Tower tower = Tower();
     //loop durch den Tag 36000
-
-    for (int i = 1; i <= 36000; ++i) {
+    int fnum = 1;
+    for (int i = 1; i <= 50000; ++i) {
         //zufällig ein Flugzeug erstellen
         float v1 = rand() % 1000;
         float absicht = rand() % 100;
-        if(v1 > 994){
-            cout<<v1;
-            int y;
-            if(absicht < 50){
-                y = 0;
-            }else{
-                y=1;
+        if(i <= 36000){
+            if(v1 > 990){
+                int y;
+                if(absicht < 50){
+                    y = 0;
+                }else{
+                    y=1;
+                }
+                //FLUGZEUG ERSTELLEN
+                plane rdmplane = plane(y, rand() % 1800 + 1800, i, fnum);
+                fnum++;
+                rdmplane.request(i);
+                //TOWER ANFRAGEN
+                tower.anfrage(rdmplane.absicht,rdmplane.treibstoff,fnum, rdmplane.startzeit);
             }
-            //FLUGZEUG ERSTELLEN
-            int fnum = rand() %  100000;
-            plane rdmplane = plane(y, rand() % 1800 + 1800, i, fnum);
-            rdmplane.request();
-
-
-            //TOWER ANFRAGEN
-            tower.anfrage(rdmplane.absicht,rdmplane.treibstoff,fnum, rdmplane.startzeit);
-            x.printtime();
             tower.order(i);
+            tower.checkcrash(i);
+            tower.abfertigen(i);
+        } else{
+            tower.order(i);
+            tower.checkcrash(i);
             tower.abfertigen(i);
         }
 

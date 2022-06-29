@@ -3,6 +3,7 @@
 //
 #include <iostream>
 #include "plane.h"
+#include "zeit.h"
 using namespace std;
 
 plane::plane(int sol, int stoff, int start, int fnum) {
@@ -18,10 +19,14 @@ plane::plane(int sol, int stoff, int start, int fnum) {
     flugnummer = fnum;
 }
 
-void plane::request() {
+void plane::request(int time) {
+    zeit k = zeit();
+
     if(absicht == 1){
-        cout << " Flug NR:" << flugnummer << " mit absicht "<< textabsicht << endl;
+        k.printnow(time);
+        cout << " Flug NR:" << flugnummer << " mit absicht "<< textabsicht <<" meldet sich beim Tower"<< endl;
         return;
     }
-    cout << " Flug NR:" << flugnummer << " mit absicht "<< textabsicht <<" hat noch Treibstoff für "<< treibstoff << endl;
+    k.printnow(time);
+    cout << " Flug NR:" << flugnummer << " mit absicht "<< textabsicht <<" meldet sich beim Tower und hat noch Treibstoff für "<< treibstoff << endl;
 }

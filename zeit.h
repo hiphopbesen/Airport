@@ -15,6 +15,7 @@ public:
     int sek;
     zeit (); //konstruktor
     void printtime();
+    void printnow(int ts);
     zeit operator ++ (int nil); // suffix
 };
 
