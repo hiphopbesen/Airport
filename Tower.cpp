@@ -212,11 +212,11 @@ void Tower::poplandung() {
             landung[i][4] = landung[i+1][4];
         }
     } else{
-        landung[0][0] = 5;
-        landung[0][1] = 5;
-        landung[0][2] = 5;
-        landung[0][3] = 5;
-        landung[0][4] = 5;
+        landung[0][0] = 0;
+        landung[0][1] = 0;
+        landung[0][2] = 0;
+        landung[0][3] = 0;
+        landung[0][4] = 0;
     }
 }
 
