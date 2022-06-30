@@ -92,7 +92,7 @@ void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit
         } else{
             Color::Modifier blue(Color::FG_BLUE);
             Color::Modifier def(Color::FG_DEFAULT);
-            cout <<blue<< "abgelehnt, zu wenig Treibstoff"  << def<<endl;
+            cout << blue << "abgelehnt, zu wenig Treibstoff"  << def<<endl;
         }
     }
 }
@@ -120,7 +120,8 @@ void Tower::abfertigen(int ts) {
                 k.printnow(ts);
                 Color::Modifier green(Color::FG_GREEN);
                 Color::Modifier def(Color::FG_DEFAULT);
-                cout << green<< " Flug NR:" << final[0][2] << " Startet" << def <<endl;
+                //irgendwie -1 um zu richtiger flugnr. zu kommen
+                cout << green<< " Flug NR:" << final[0][2]-1 << " Startet" << def <<endl;
                 popstart();
                 rfvorgang = 1;
                 rfbstart = ts;
@@ -132,7 +133,7 @@ void Tower::abfertigen(int ts) {
                 k.printnow(ts);
                 Color::Modifier green(Color::FG_GREEN);
                 Color::Modifier def(Color::FG_DEFAULT);
-                cout <<green<< " Flug NR:" << final[0][2] << " Landet" << def << endl;
+                cout <<green<< " Flug NR:" << final[0][2]-1 << " Landet" << def << endl;
                 poplandung();
                 rfvorgang = 0;
                 rfbstart = ts;
@@ -201,6 +202,7 @@ void Tower::popstart() {
 }
 
 void Tower::poplandung() {
+   // cout << "Nr:"<<landung[0][2]<<"treibstof->"<<landung[0][1]<<" anfrage->" << landung[0][3]<< " ll"<<landelaenge<<endl;
     landelaenge--;
     if(landelaenge > 0){
         for (int i = 0; i < landelaenge; ++i) {
@@ -251,7 +253,7 @@ void Tower::crash(int id, int ts) {
     k.printnow(ts);
     Color::Modifier red(Color::FG_RED);
     Color::Modifier def(Color::FG_DEFAULT);
-    cout <<red<< " Flug NR:" << landung[id][2] << " ist abgestürzt" << def << endl;
+    cout <<red<< " Flug NR:" << landung[id-1][2] << " ist abgestürzt" << def << endl;
     //während id <= länge austauschen, dann enfernen
     int fid = id;
     landelaenge--;
