@@ -18,11 +18,11 @@ void Tower::order(int zeit) {
         int wartezeit = zeit - landung[i][3];
         //große zahl = hohe prio, absturzzeit muss je niedriger die ist mehr prio geben.
         int absturz = landung[i][1] - wartezeit;
-        int prio = (3600-absturz) + wartezeit;
+        int prio = (1/(3600-absturz)) + wartezeit;
         //ausgleichen der warteschlangen
         int ausgleich = 0;
         if(landelaenge-startlaenge>0){
-            ausgleich = landelaenge-startlaenge*100;
+            ausgleich = landelaenge-startlaenge*10;
         }
         landung[i][4] = prio + ausgleich;
     }
@@ -31,7 +31,7 @@ void Tower::order(int zeit) {
         wartezeit = zeit - start[i][3];
         int ausgleich = 0;
         if(startlaenge-landelaenge>0){
-            ausgleich = startlaenge-landelaenge*100;
+            ausgleich = startlaenge-landelaenge*10;
         }
         start[i][4] = wartezeit+ausgleich;
     }
@@ -97,20 +97,17 @@ void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit
     }
 }
 
-
 void Tower::abfertigen(int ts) {
     //checken ob rollfeld frei und rollfeld
     if(rollfeld == 1){
         if(rfvorgang == 0){
             if(rfbstart+landezeit <= ts){
                 rollfeld = 0;
-                rfbstart = ts;
             }
         }
         if(rfvorgang == 1){
             if(rfbstart+startzeit <= ts){
                 rollfeld = 0;
-                rfbstart = ts;
             }
         }
     }
@@ -126,6 +123,7 @@ void Tower::abfertigen(int ts) {
                 cout << green<< " Flug NR:" << final[0][2] << " Startet" << def <<endl;
                 popstart();
                 rfvorgang = 1;
+                rfbstart = ts;
             }
         }
         if(landelaenge > 0){
@@ -137,6 +135,7 @@ void Tower::abfertigen(int ts) {
                 cout <<green<< " Flug NR:" << final[0][2] << " Landet" << def << endl;
                 poplandung();
                 rfvorgang = 0;
+                rfbstart = ts;
             }
         }
         rollfeld = 1;
@@ -221,7 +220,7 @@ void Tower::poplandung() {
 }
 
 void Tower::kannlanden() {
-    //5 vorgänge muss ein flugzeug mindestens warten können.
+    //3 vorgänge muss ein flugzeug mindestens warten können.
     int depth = 3;
     currentwait = 0;
     //wartezeiten der ersten x wartenden analysieren oder wie viele wartenden es gibt,

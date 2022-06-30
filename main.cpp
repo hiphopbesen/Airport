@@ -18,7 +18,7 @@ int main() {
         float v1 = rand() % 1000;
         float absicht = rand() % 100;
         if(i <= 36000){
-            if(v1 > 990){
+            if(v1 > 994){
                 int y;
                 if(absicht < 50){
                     y = 0;
