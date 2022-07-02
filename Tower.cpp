@@ -49,7 +49,11 @@ void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit
             start[startlaenge][3]=anfragezeit;
             startlaenge++;
         }else{
-            cout << "abgelehnt, startwarteschlange voll" <<endl;
+            Color::Modifier blue(Color::FG_BLUE);
+            Color::Modifier def(Color::FG_DEFAULT);
+            zeit abgelehnt = zeit();
+            abgelehnt.printnow(anfragezeit);
+            cout << blue << " Flug NR:"<< flugnummer << " abgelehnt, Startwarteschlange voll" <<def<<endl;
         }
 
     }
@@ -66,12 +70,16 @@ void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit
             }else{
                 Color::Modifier blue(Color::FG_BLUE);
                 Color::Modifier def(Color::FG_DEFAULT);
-                cout <<blue<< "abgelehnt, Landewarteschlange voll" << def<<endl;
+                zeit abgelehnt = zeit();
+                abgelehnt.printnow(anfragezeit);
+                cout << blue << " Flug NR:"<< flugnummer << " abgelehnt, Landewarteschlange voll" <<def<<endl;
             }
         } else{
             Color::Modifier blue(Color::FG_BLUE);
             Color::Modifier def(Color::FG_DEFAULT);
-            cout << blue << "abgelehnt, zu wenig Treibstoff"  << def<<endl;
+            zeit abgelehnt = zeit();
+            abgelehnt.printnow(anfragezeit);
+            cout << blue << " Flug NR:"<< flugnummer << " abgelehnt, zu wenig Treibstoff" <<def<<endl;
         }
     }
 }
@@ -100,11 +108,13 @@ void Tower::abfertigen(int ts) {
                 k.printnow(ts);
                 Color::Modifier green(Color::FG_GREEN);
                 Color::Modifier def(Color::FG_DEFAULT);
-                //irgendwie -1 um zu richtiger flugnr. zu kommen
                 cout << green<< " Flug NR:" << final[0][2] << " Startet" << def <<endl;
+                //vorgang entfernen
                 popstart();
+                //rollfeld mit einem start blockieren und start dieses startvorgans schreiben
                 rfvorgang = 1;
                 rfbstart = ts;
+                rollfeld = 1;
             }
         }
         if(landelaenge > 0){
@@ -114,12 +124,14 @@ void Tower::abfertigen(int ts) {
                 Color::Modifier green(Color::FG_GREEN);
                 Color::Modifier def(Color::FG_DEFAULT);
                 cout <<green<< " Flug NR:" << final[0][2] << " Landet" << def << endl;
+                //vorgang entfernen
                 poplandung();
+                //rollfeld mit einer landung blockieren und landevorgnagsstar eintragen
                 rfvorgang = 0;
                 rfbstart = ts;
+                rollfeld = 1;
             }
         }
-        rollfeld = 1;
     }
 }
 

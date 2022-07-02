@@ -27,10 +27,10 @@ int main() {
                 }
                 //FLUGZEUG ERSTELLEN
                 plane rdmplane = plane(y, rand() % 1800 + 1800, i, fnum);
-                fnum++;
                 rdmplane.request(i);
                 //TOWER ANFRAGEN
                 tower.anfrage(rdmplane.absicht,rdmplane.treibstoff,fnum, rdmplane.startzeit);
+                fnum++;
             }
             tower.order(i);
             tower.checkcrash(i);
