@@ -49,3 +49,23 @@ int main() {
 
     return 0;
 }
+
+
+int maindebug(){
+    cout << "Airport simulation!" << endl;
+    zeit x = zeit();
+    Tower tower = Tower();
+    //loop durch den Tag 36000
+    tower.anfrage(0,100,1, 0);
+    tower.anfrage(1,0,2, 0);
+    tower.anfrage(0,3600,3, 200);
+    tower.anfrage(0,1000,4, 500);
+    for (int i = 1; i <= 50000; ++i) {
+        tower.order(i);
+        tower.checkcrash(i);
+        tower.abfertigen(i);
+        x++;
+    }
+
+    return 0;
+}

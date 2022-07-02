@@ -37,9 +37,10 @@ public:
     void abfertigen(int zeit);
     void popstart();
     void poplandung();
-    void kannlanden();
+    void kannlanden(int treibstoff, int anfragezeit);
     void checkcrash(int ts);
     void crash(int id,int ts);
+    void buildfinal();
     void debug();
 };
 

@@ -14,19 +14,20 @@ Tower::Tower() {
 }
 
 void Tower::order(int zeit) {
-    for (int i = 0; i <= landelaenge-1; ++i) {
+    for (int i = 0; i < landelaenge; ++i) {
         int wartezeit = zeit - landung[i][3];
         //große zahl = hohe prio, absturzzeit muss je niedriger die ist mehr prio geben.
         int absturz = landung[i][1] - wartezeit;
-        int prio = (1/(3600-absturz)) + wartezeit;
+        int prio = 10*(3600/(3600-absturz)) + wartezeit;
         //ausgleichen der warteschlangen
         int ausgleich = 0;
         if(landelaenge-startlaenge>0){
             ausgleich = landelaenge-startlaenge*10;
         }
+        if(ausgleich < 0){ausgleich=0;}
         landung[i][4] = prio + ausgleich;
     }
-    for (int i = 0; i <= startlaenge-1; ++i) {
+    for (int i = 0; i < startlaenge; ++i) {
         int wartezeit;
         wartezeit = zeit - start[i][3];
         int ausgleich = 0;
@@ -35,29 +36,7 @@ void Tower::order(int zeit) {
         }
         start[i][4] = wartezeit+ausgleich;
     }
-    //gesamtlänge des kombinierten arrrays
-    ges = 0;
-    for (int i = 0; i <= startlaenge-1; ++i){
-            final[ges][0] = start[i][0];
-            final[ges][1] = start[i][1];
-            final[ges][2] = start[i][2];
-            final[ges][3] = start[i][3];
-            final[ges][4] = start[i][4];
-            ges++;
-    }
-    //dann landung
-    for (int i = 0; i <= landelaenge-1; ++i) {
-        final[ges][0] = landung[i][0];
-        final[ges][1] = landung[i][1];
-        final[ges][2] = landung[i][2];
-        final[ges][3] = landung[i][3];
-        final[ges][4] = landung[i][4];
-        ges++;
-    }
-    // sortieren nach priorität gespeichert in final[..][4]
-    if(ges > 1){
-        nestedsort();
-    }
+    buildfinal();
 }
 
 void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit) {
@@ -76,7 +55,7 @@ void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit
     }
     //absicht 0 = Landen
     if(absicht == 0){
-        kannlanden();
+        kannlanden(treibstoff,anfragezeit);
         if(currentwait < treibstoff){
             if(landelaenge < 50){
                 landung[landelaenge][0]=absicht;
@@ -99,6 +78,7 @@ void Tower::anfrage(int absicht, int treibstoff, int flugnummer, int anfragezeit
 
 void Tower::abfertigen(int ts) {
     //checken ob rollfeld frei und rollfeld
+    int x = 23233;
     if(rollfeld == 1){
         if(rfvorgang == 0){
             if(rfbstart+landezeit <= ts){
@@ -121,7 +101,7 @@ void Tower::abfertigen(int ts) {
                 Color::Modifier green(Color::FG_GREEN);
                 Color::Modifier def(Color::FG_DEFAULT);
                 //irgendwie -1 um zu richtiger flugnr. zu kommen
-                cout << green<< " Flug NR:" << final[0][2]-1 << " Startet" << def <<endl;
+                cout << green<< " Flug NR:" << final[0][2] << " Startet" << def <<endl;
                 popstart();
                 rfvorgang = 1;
                 rfbstart = ts;
@@ -133,7 +113,7 @@ void Tower::abfertigen(int ts) {
                 k.printnow(ts);
                 Color::Modifier green(Color::FG_GREEN);
                 Color::Modifier def(Color::FG_DEFAULT);
-                cout <<green<< " Flug NR:" << final[0][2]-1 << " Landet" << def << endl;
+                cout <<green<< " Flug NR:" << final[0][2] << " Landet" << def << endl;
                 poplandung();
                 rfvorgang = 0;
                 rfbstart = ts;
@@ -183,61 +163,114 @@ void Tower::debug() {
 }
 
 void Tower::popstart() {
-    startlaenge--;
-    if(startlaenge >0){
-        for (int i = 0; i < startlaenge; ++i) {
-            start[i][0] = start[i+1][0];
-            start[i][1] = start[i+1][1];
-            start[i][2] = start[i+1][2];
-            start[i][3] = start[i+1][3];
-            start[i][4] = start[i+1][4];
+    //start sortieren bevor erster start entfernt wird
+    bool sorted = false;
+    int temp[] = {0,0,0,0,0};
+    do {
+        sorted = true;
+        for (int i = 0; i < startlaenge-1; ++i) {
+            if(start[i][4] < start[i+1][4]){
+                sorted = false;
+                //umschlichten
+                temp[0] = start[i][0];
+                temp[1] = start[i][1];
+                temp[2] = start[i][2];
+                temp[3] = start[i][3];
+                temp[4] = start[i][4];
+
+                start[i][0] = start[i+1][0];
+                start[i][1] = start[i+1][1];
+                start[i][2] = start[i+1][2];
+                start[i][3] = start[i+1][3];
+                start[i][4] = start[i+1][4];
+
+                start[i+1][0] = temp[0];
+                start[i+1][1] = temp[1];
+                start[i+1][2] = temp[2];
+                start[i+1][3] = temp[3];
+                start[i+1][4] = temp[4];
+            }
         }
-    }else{
-        start[0][0] = 5;
-        start[0][1] = 5;
-        start[0][2] = 5;
-        start[0][3] = 5;
-        start[0][4] = 5;
     }
+    while(!sorted);
+
+    for (int i = 0; i < startlaenge; ++i) {
+        start[i][0] = start[i+1][0];
+        start[i][1] = start[i+1][1];
+        start[i][2] = start[i+1][2];
+        start[i][3] = start[i+1][3];
+        start[i][4] = start[i+1][4];
+        }
+    startlaenge--;
 }
 
 void Tower::poplandung() {
-   // cout << "Nr:"<<landung[0][2]<<"treibstof->"<<landung[0][1]<<" anfrage->" << landung[0][3]<< " ll"<<landelaenge<<endl;
-    landelaenge--;
-    if(landelaenge > 0){
-        for (int i = 0; i < landelaenge; ++i) {
-            landung[i][0] = landung[i+1][0];
-            landung[i][1] = landung[i+1][1];
-            landung[i][2] = landung[i+1][2];
-            landung[i][3] = landung[i+1][3];
-            landung[i][4] = landung[i+1][4];
+    //landung sortieren bevor ergebnis entfernt wird
+    bool sorted = false;
+    int temp[] = {0,0,0,0,0};
+    do {
+        sorted = true;
+        for (int i = 0; i < landelaenge-1; ++i) {
+            if(landung[i][4] < landung[i+1][4]){
+                sorted = false;
+                //umschlichten
+                temp[0] = landung[i][0];
+                temp[1] = landung[i][1];
+                temp[2] = landung[i][2];
+                temp[3] = landung[i][3];
+                temp[4] = landung[i][4];
+
+                landung[i][0] = landung[i+1][0];
+                landung[i][1] = landung[i+1][1];
+                landung[i][2] = landung[i+1][2];
+                landung[i][3] = landung[i+1][3];
+                landung[i][4] = landung[i+1][4];
+
+                landung[i+1][0] = temp[0];
+                landung[i+1][1] = temp[1];
+                landung[i+1][2] = temp[2];
+                landung[i+1][3] = temp[3];
+                landung[i+1][4] = temp[4];
+            }
         }
-    } else{
-        landung[0][0] = 0;
-        landung[0][1] = 0;
-        landung[0][2] = 0;
-        landung[0][3] = 0;
-        landung[0][4] = 0;
     }
+    while(!sorted);
+    // cout << "Nr:"<<landung[0][2]<<"treibstof->"<<landung[0][1]<<" anfrage->" << landung[0][3]<< " ll"<<landelaenge<<endl;
+   for (int i = 0; i < landelaenge; ++i) {
+       landung[i][0] = landung[i+1][0];
+       landung[i][1] = landung[i+1][1];
+       landung[i][2] = landung[i+1][2];
+       landung[i][3] = landung[i+1][3];
+       landung[i][4] = landung[i+1][4];
+   }
+    landelaenge--;
 }
 
-void Tower::kannlanden() {
-    //3 vorgänge muss ein flugzeug mindestens warten können.
-    int depth = 3;
-    currentwait = 0;
-    //wartezeiten der ersten x wartenden analysieren oder wie viele wartenden es gibt,
-    if(ges < depth){
-        depth = ges;
+void Tower::kannlanden(int treibstoff, int anfragezeit) {
+    //imaginäre priorität berechnen
+    int wartezeit = 0;
+    //große zahl = hohe prio, absturzzeit muss je niedriger die ist mehr prio geben.
+    int absturz = treibstoff - wartezeit;
+    int prio = 10*(3600/(3600-absturz)) + wartezeit;
+    //ausgleichen der warteschlangen
+    int ausgleich = 0;
+    if(landelaenge-startlaenge>0){
+        ausgleich = landelaenge-startlaenge*10;
     }
-    //start und landezeiten werden zur sicherheit verdoppelt
-    for (int i = 0; i < depth; ++i) {
-        if(final[i][0] == 1){
-            currentwait = currentwait + startzeit*2;
+    if(ausgleich < 0){ausgleich=0;}
+    int i_prio = prio + ausgleich;
+
+    //imaginäre warteschlangenposition
+    bool posfound = false;
+    int i = 0;
+    do{
+        if(final[i][4] < i_prio){
+            posfound = true;
         }
-        if(final[i][0] == 0){
-            currentwait = currentwait + landezeit*2;
-        }
+        i++;
     }
+    while(!posfound);
+    currentwait = i*landezeit;
 }
 
 void Tower::checkcrash(int ts) {
@@ -253,7 +286,7 @@ void Tower::crash(int id, int ts) {
     k.printnow(ts);
     Color::Modifier red(Color::FG_RED);
     Color::Modifier def(Color::FG_DEFAULT);
-    cout <<red<< " Flug NR:" << landung[id-1][2] << " ist abgestürzt" << def << endl;
+    cout <<red<< " Flug NR:" << landung[id][2] << " ist abgestürzt" << def << endl;
     //während id <= länge austauschen, dann enfernen
     int fid = id;
     landelaenge--;
@@ -265,6 +298,43 @@ void Tower::crash(int id, int ts) {
         landung[fid][4] = landung[fid+1][4];
         fid++;
     } while (fid < landelaenge);
+}
+
+void Tower::buildfinal() {
+    //array leeren
+
+    for (int i=0; i < 100;i++){
+        final[i][0] = 0;
+        final[i][1] = 0;
+        final[i][2] = 0;
+        final[i][3] = 0;
+        final[i][4] = 0;
+    }
+    //gesamtlänge des kombinierten arrrays
+    ges = 0;
+    //array füllen
+    for (int i = 0; i < startlaenge; ++i){
+        final[ges][0] = start[i][0];
+        final[ges][1] = start[i][1];
+        final[ges][2] = start[i][2];
+        final[ges][3] = start[i][3];
+        final[ges][4] = start[i][4];
+        ges++;
+    }
+    //dann landung
+    for (int i = 0; i < landelaenge; ++i) {
+        final[ges][0] = landung[i][0];
+        final[ges][1] = landung[i][1];
+        final[ges][2] = landung[i][2];
+        final[ges][3] = landung[i][3];
+        final[ges][4] = landung[i][4];
+        ges++;
+    }
+    // sortieren nach priorität gespeichert in final[..][4]
+    if(ges > 1){
+        nestedsort();
+    }
+
 }
 
 
