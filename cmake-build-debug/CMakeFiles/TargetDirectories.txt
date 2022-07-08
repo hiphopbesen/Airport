@@ -1,0 +1,3 @@
+/Users/luca/CLionProjects/Airport/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/luca/CLionProjects/Airport/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/luca/CLionProjects/Airport/cmake-build-debug/CMakeFiles/Airport.dir
